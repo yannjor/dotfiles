@@ -329,27 +329,24 @@ keymap("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 -------------------------------------------------
 -- Plugin setups
 -------------------------------------------------
-local lspconfig_defaults = require("lspconfig").util.default_config
-lspconfig_defaults.capabilities =
-    vim.tbl_deep_extend("force", lspconfig_defaults.capabilities, require("blink.cmp").get_lsp_capabilities())
-
 vim.api.nvim_create_autocmd("LspAttach", {
     desc = "LSP actions",
     callback = function(event)
-        local lsp_keymap_opts = { buffer = event.buf }
-        local bind = vim.keymap.set
-        bind("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>f", "<cmd>lua vim.lsp.buf.format()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>gr", "<cmd>lua vim.lsp.buf.references()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>a", "<cmd>lua vim.lsp.buf.code_action()<CR>", lsp_keymap_opts)
-        bind("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", lsp_keymap_opts)
+        local map = function(keys, func, mode)
+            mode = mode or "n"
+            vim.keymap.set(mode, keys, func, { buffer = event.buf })
+        end
+        map("K", vim.lsp.buf.hover)
+        map("<leader>f", vim.lsp.buf.format)
+        map("gd", vim.lsp.buf.implementation)
+        map("<leader>gr", vim.lsp.buf.references)
+        map("<leader>rn", vim.lsp.buf.rename)
+        map("<leader>a", vim.lsp.buf.code_action)
+        map("<leader>e", vim.diagnostic.open_float)
     end,
 })
 
-require("lspconfig").pyright.setup({
+vim.lsp.config("pyright", {
     settings = {
         python = {
             analysis = {
@@ -359,7 +356,7 @@ require("lspconfig").pyright.setup({
     },
 })
 
-require("lspconfig").rust_analyzer.setup({
+vim.lsp.config("rust_analyzer", {
     settings = {
         ["rust-analyzer"] = {
             checkOnSave = {
