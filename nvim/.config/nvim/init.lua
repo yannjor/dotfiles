@@ -43,7 +43,7 @@ local plugins = {
     "neovim/nvim-lspconfig",
     {
         "saghen/blink.cmp",
-        version = "v0.*",
+        version = "v1.*",
         opts = {
             keymap = {
                 -- Simple tab complete
