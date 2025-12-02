@@ -417,7 +417,40 @@ vim.cmd([[
   colorscheme gruvbox-material
 ]])
 
-require("gitsigns").setup()
+require("gitsigns").setup({
+    on_attach = function(bufnr)
+        local gitsigns = require("gitsigns")
+
+        local function map(mode, l, r, options)
+            opts = options or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, options)
+        end
+
+        map("n", "<leader>hs", gitsigns.stage_hunk)
+        map("n", "<leader>hr", gitsigns.reset_hunk)
+
+        map("v", "<leader>hs", function()
+            gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+        end)
+
+        map("v", "<leader>hr", function()
+            gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+        end)
+
+        map("n", "<leader>hp", gitsigns.preview_hunk)
+        map("n", "<leader>hi", gitsigns.preview_hunk_inline)
+
+        map("n", "<leader>hb", function()
+            gitsigns.blame_line({ full = true })
+        end)
+
+        map("n", "<leader>hd", gitsigns.diffthis)
+
+        map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
+        map("n", "<leader>tw", gitsigns.toggle_word_diff)
+    end,
+})
 
 require("lualine").setup({
     options = {
