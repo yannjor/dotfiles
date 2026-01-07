@@ -12,12 +12,3 @@ export PATH="$PATH:$GOPATH/bin"
 export EDITOR="nvim"
 export TERMINAL="kitty"
 export BROWSER="librewolf"
-
-# File manager icons
-LF_ICONS=$(sed ~/.config/lf/icons  \
-            -e '/^[ \t]*#/d'       \
-            -e '/^[ \t]*$/d'       \
-            -e 's/[ \t]\+/=/g'     \
-            -e 's/$/ /')
-LF_ICONS=${LF_ICONS//$'\n'/:}
-export LF_ICONS

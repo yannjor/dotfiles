@@ -44,8 +44,8 @@ SPACESHIP_GIT_PREFIX=""
 
 # ALIASES
 alias cat="bat"
-alias ls="exa --icons"
-alias l="exa -lag --icons"
+alias ls="eza --icons"
+alias l="eza -lag --icons"
 alias gs="git status"
 alias gl="git log"
 alias gc="git clone"
@@ -55,6 +55,7 @@ alias ga="git add -A"
 alias vim="nvim"
 alias cl="clear"
 alias cal="cal -m"
+alias neofetch="fastfetch"
 
 # Display random pokemon :)
 krabby random 1-5 --no-gmax
