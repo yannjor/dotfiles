@@ -7,7 +7,6 @@ plug "zsh-users/zsh-syntax-highlighting"
 plug "spaceship-prompt/spaceship-prompt"
 plug "hlissner/zsh-autopair"
 plug "zap-zsh/vim"
-plug "chivalryq/zsh-autojump"
 
 bindkey "^ " autosuggest-accept
 bindkey "^[[A" up-line-or-beginning-search
@@ -56,6 +55,8 @@ alias vim="nvim"
 alias cl="clear"
 alias cal="cal -m"
 alias neofetch="fastfetch"
+
+eval "$(zoxide init zsh)"
 
 # Display random pokemon :)
 krabby random 1-5 --no-gmax
