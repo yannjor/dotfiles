@@ -1,104 +1,57 @@
--- Install lazy automatically
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
-vim.opt.rtp:prepend(lazypath)
-
-local plugins = {
+-------------------------------------------------
+-- Plugins
+-------------------------------------------------
+vim.pack.add({
     -------------------------
     -- General enhancements
     -------------------------
     -- Filetree
-    { "nvim-tree/nvim-tree.lua", opts = {} },
+    "https://github.com/nvim-tree/nvim-tree.lua",
     -- Commenting
-    { "numToStr/Comment.nvim", opts = {} },
+    "https://github.com/numToStr/Comment.nvim",
     -- Better syntax highlighting
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     -- Auto pairs for brackets etc.
-    "windwp/nvim-autopairs",
+    "https://github.com/windwp/nvim-autopairs",
     -- Git diffs in sign column
-    "lewis6991/gitsigns.nvim",
+    "https://github.com/lewis6991/gitsigns.nvim",
     -- Telescope (fuzzy finder)
-    "nvim-lua/plenary.nvim",
-    "nvim-telescope/telescope.nvim",
-    { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/nvim-telescope/telescope.nvim",
     -- Quickly toggle terminal while editing
-    "akinsho/toggleterm.nvim",
+    "https://github.com/akinsho/toggleterm.nvim",
     -- Git UI
-    "NeogitOrg/neogit",
-    "sindrets/diffview.nvim",
+    "https://github.com/NeogitOrg/neogit",
+    "https://github.com/sindrets/diffview.nvim",
     -------------------------
     -- LSP & Completion
     -------------------------
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
-    "neovim/nvim-lspconfig",
-    {
-        "saghen/blink.cmp",
-        version = "v1.*",
-        opts = {
-            keymap = {
-                -- Simple tab complete
-                ["<CR>"] = { "accept", "fallback" },
-                ["<Tab>"] = { "select_next", "fallback" },
-                ["<S-Tab>"] = { "select_prev", "fallback" },
-            },
-            appearance = {
-                use_nvim_cmp_as_default = true,
-                nerd_font_variant = "mono",
-            },
-            sources = {
-                default = { "lsp", "path", "snippets", "buffer" },
-            },
-            signature = { enabled = true },
-            completion = {
-                menu = {
-                    auto_show = function(ctx)
-                        return ctx.mode ~= "cmdline"
-                    end,
-                },
-            },
-        },
-        opts_extend = { "sources.default" },
-    },
-    "rafamadriz/friendly-snippets",
-    "L3MON4D3/LuaSnip",
-    "nvimtools/none-ls.nvim",
-    {
-        "folke/lazydev.nvim",
-        ft = "lua", -- only load on lua files
-        opts = {
-            library = {
-                -- See the configuration section for more details
-                -- Load luvit types when the `vim.uv` word is found
-                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-            },
-        },
-    },
+    "https://github.com/williamboman/mason.nvim",
+    "https://github.com/williamboman/mason-lspconfig.nvim",
+    "https://github.com/neovim/nvim-lspconfig",
+    { src = "https://github.com/saghen/blink.cmp",                version = "v1" },
+    "https://github.com/rafamadriz/friendly-snippets",
+    "https://github.com/L3MON4D3/LuaSnip",
+    "https://github.com/nvimtools/none-ls.nvim",
+    "https://github.com/folke/lazydev.nvim",
     -------------------------
     -- Visual enhancements & themes
     -------------------------
     -- Status line
-    "nvim-lualine/lualine.nvim",
+    "https://github.com/nvim-lualine/lualine.nvim",
     -- Standalone UI for nvim-lsp progress
-    { "j-hui/fidget.nvim", opts = {} },
+    "https://github.com/j-hui/fidget.nvim",
     -- Icons
-    "nvim-tree/nvim-web-devicons",
+    "https://github.com/nvim-tree/nvim-web-devicons",
     -- Modified gruvbox
-    "sainnhe/gruvbox-material",
+    "https://github.com/sainnhe/gruvbox-material",
     -- Github theme
-    "projekt0n/github-nvim-theme",
-}
-
-require("lazy").setup(plugins)
+    "https://github.com/projekt0n/github-nvim-theme",
+    -- REST client
+    "https://github.com/mistweaverco/kulala.nvim",
+    -- Copilot
+    "https://github.com/github/copilot.vim",
+})
 
 -------------------------------------------------
 -- Settings
@@ -326,9 +279,40 @@ keymap("n", "<leader>sps", ":setlocal spell! spelllang=sv<CR>", opts)
 keymap("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 keymap("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- Ctrl+y to accept copilot suggestions
+keymap("i", "<C-J>", 'copilot#Accept("\\<CR>")', {
+    expr = true,
+    replace_keycodes = false,
+})
+vim.g.copilot_no_tab_map = true
+
 -------------------------------------------------
 -- Plugin setups
 -------------------------------------------------
+require("blink.cmp").setup({
+    keymap = {
+        -- Simple tab complete
+        ["<CR>"] = { "accept", "fallback" },
+        ["<Tab>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "select_prev", "fallback" },
+    },
+    appearance = {
+        use_nvim_cmp_as_default = true,
+        nerd_font_variant = "mono",
+    },
+    sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+    },
+    signature = { enabled = true },
+    completion = {
+        menu = {
+            auto_show = function(ctx)
+                return ctx.mode ~= "cmdline"
+            end,
+        },
+    },
+})
+
 vim.api.nvim_create_autocmd("LspAttach", {
     desc = "LSP actions",
     callback = function(event)
@@ -405,7 +389,6 @@ require("telescope").setup({
         fzf = {},
     },
 })
-require("telescope").load_extension("fzf")
 
 require("nvim-autopairs").setup({
     check_ts = true, -- treesitter integration
@@ -501,7 +484,7 @@ require("toggleterm").setup({
     persist_size = true,
     direction = "float",
     close_on_exit = true, -- close the terminal window when the process exits
-    shell = vim.o.shell, -- change the default shell
+    shell = vim.o.shell,  -- change the default shell
     -- This field is only relevant if direction is set to 'float'
     float_opts = {
         -- The border key is *almost* the same as 'nvim_open_win'
@@ -518,8 +501,7 @@ require("toggleterm").setup({
 })
 
 ---@diagnostic disable-next-line: missing-fields
-require("nvim-treesitter.configs").setup({
-    ensure_installed = { "bash", "python", "lua", "html", "javascript", "c", "rust" },
+require("nvim-treesitter").setup({
     auto_install = true,
     highlight = {
         enable = true,
@@ -528,3 +510,34 @@ require("nvim-treesitter.configs").setup({
         enable = true,
     },
 })
+-- Only install parsers that aren't already installed
+local ensure_installed = { "bash", "python", "lua", "html", "javascript", "c", "rust", "markdown", "jsx" }
+local ts_installed = require("nvim-treesitter.config").get_installed()
+local parsers = vim.iter(ensure_installed)
+    :filter(function(parser)
+        return not vim.tbl_contains(ts_installed, parser)
+    end)
+    :totable()
+
+require("nvim-treesitter").install(parsers)
+
+-- Start Treesitter
+vim.api.nvim_create_autocmd("FileType", {
+    callback = function()
+        -- Enable treesitter highlighting and disable regex syntax
+        pcall(vim.treesitter.start)
+        -- Enable treesitter-based indentation
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end,
+})
+
+require("nvim-tree").setup({})
+require("Comment").setup({})
+require("fidget").setup({})
+
+require("lazydev").setup({
+    library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+    },
+})
+
